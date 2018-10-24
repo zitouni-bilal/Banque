@@ -1,0 +1,165 @@
+<!DOCTYPE  html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd" >
+<html   xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+        >
+        
+<head>
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css"
+                                       th:href="@{/css/bootstrap.min.css}" />
+                                       
+<title>hello in your banque</title>
+</head>
+<body>
+     <div class="navbar navbar-default">
+      <div class="container-fluid">
+      <ul class="nav navbar-nav">
+      <li> <a th:href="@{/operations}">Operations</a>   </li>
+      <li> <a th:href="@{/comptes}">Compte</a>   </li>
+      <li> <a th:href="@{/clients}">Operations</a>   </li>
+      <li> <a>Operations</a>   </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+              <li> <a th:href="@{/login?logout}">Logout</a></li>
+      </ul>
+      
+      </div>
+      
+      </div>
+
+<div class="col-md-6">
+<div class="panel-primary">
+<div class="panel-heading">Consultation d'un Compte</div>
+
+<div class="panel-body">
+
+<form th:action="@{/consulterCompte}" method="get">
+   
+     <label>Code compte:</label>
+     <input type="text" name="codeCompte" />
+     <button class="btn btn-primary" type="submit"> ok</button>
+   
+
+
+</form>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-md-6" th:if="${comptee}">
+<div class="panel-primary">
+<div class="panel-heading">Informations sur le compte</div>
+<div class="panel-body">
+<div>
+<label>Code Compte : </label>
+<label th:text="${comptee.numeroCompte}"></label><br>
+<label>Date de creation : </label>
+<label th:text="${comptee.dateCreation}"></label><br>
+<label>Solde : </label>
+<label th:text="${comptee.solde}"></label>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-md-6">
+<div class="panel-primary">
+<div class="panel-heading">Liste des operations </div>
+
+<div class="panel-body">
+<table class="table table-striped">
+
+   <tr>
+   <th>Num</th> <th>Type</th>  <th>Date</th> <th>Montant</th>   	
+   </tr>
+   <tr th:each="o:${ListOperations}">
+
+     <td th:text="${o.numero}"> </td>
+     <td th:text="${o.class.simpleName}"> </td>
+     <td th:text="${o.dateOperation}"> </td>
+     <td th:text="${o.montant}"> </td>
+    
+    </tr>
+
+</table>
+<div class="container">
+<ul class="nav nav-pills">
+<li th:each="p,status:${pages}">
+<a th:href="@{/consulterCompte(codeCompte=${comptee.numeroCompte},page=${status.index})}" th:text="${status.index}"></a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+
+
+</div>
+</div>
+
+
+
+
+
+<div class="col-md-6" th:if="${comptee}" sec:authorize="hasRole('ROLE_ADMIN')">
+<div class="panel-primary">
+<div class="panel-heading">Passer un virement </div>
+
+<div class="panel-body">
+
+<form th:action="@{/addVersement}" method="post">
+
+<div>
+<label>Compte :</label>
+<input   type="hidden" th:value="${comptee.numeroCompte}" name="codeCompte"/> 
+<label th:text="${comptee.numeroCompte}"></label><br>
+</div>
+<div>
+<input type="radio" name="typeOper" value="vers"  checked="checked" 
+       onchange="document.getElementById('forVerment').style.display='none'"> 
+<label>  Virsement </label>
+
+<input type="radio" name="typeOper" value="verm"  checked="checked"
+       onchange="document.getElementById('forVerment').style.display='block'"></input>
+<label>  Virement </label>
+
+<input type="radio" name="typeOper" value="Retrer" 
+       onchange="document.getElementById('forVerment').style.display='none'"/></input>
+<label>  Retrer </label>
+</div>
+<div id="forVerment">
+<label >Compte du benefeciere</label>
+<input type="text" name="numCompte2" />
+</div>
+<div>
+<label >Montant</label>
+<input type="text" name="montant" />
+<button type="submit" >Verser</button>
+</div>
+
+
+
+</form>
+
+   
+</div>
+</div>
+</div>
+
+
+
+</body>
+</html>
